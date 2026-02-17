@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini Market ₺ - Paraları Tanıyalım</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --accent:#2563eb;
+      --accent2:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 10px 24px rgba(0,0,0,.08);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background: linear-gradient(180deg, #eef2ff, var(--bg));
+    }
+    header{
+      position: sticky;
+      top:0;
+      z-index:10;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .wrap{max-width:1150px; margin:0 auto; padding:14px 16px;}
+    .top{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+    .brand{display:flex; align-items:center; gap:10px;}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, #93c5fd, #2563eb);
+      box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      color:white; font-weight:900;
+    }
+    h1{font-size:20px; margin:0;}
+    .sub{font-size:12px; color:var(--muted); margin-top:2px;}
+
+    .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      background: white;
+      border:1px solid rgba(0,0,0,.08);
+      padding:10px 12px;
+      border-radius:999px;
+      box-shadow: 0 6px 14px rgba(0,0,0,.06);
+    }
+    .pill label{font-size:12px; color:var(--muted); font-weight:900;}
+    select, button, input{font: inherit;}
+    select, input{
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 12px;
+      padding:8px 10px;
+      background: white;
+    }
+    input{min-width:220px;}
+    .btn{
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor:pointer;
+      font-weight:1000;
+      box-shadow: var(--shadow);
+      transform: translateY(0);
+      transition: transform .06s ease, filter .15s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:active{transform: translateY(1px);}
+    .btn.primary{background: var(--accent); color:white;}
+    .btn.green{background: var(--accent2); color:white;}
+    .btn.gray{background:#111827; color:white;}
+    .btn.white{background:white; color:var(--ink); border:1px solid rgba(0,0,0,.1); box-shadow: 0 10px 18px rgba(0,0,0,.06);}
+    .btn.small{padding:10px 12px;}
+    .btn.warn{background: var(--warn); color:#111827;}
+    .btn.bad{background: var(--bad); color:white;}
+
+    .starBox{display:flex; align-items:center; gap:8px; font-weight:1000;}
+    .star{width:22px; height:22px; display:inline-block;}
+
+    .nav{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .nav .btn{box-shadow:none;}
+
+    main{padding:18px 16px 40px;}
+    .panel{
+      max-width:1150px; margin:0 auto;
+      background: rgba(255,255,255,.75);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .row{display:flex; gap:14px; flex-wrap:wrap; align-items:stretch;}
+    .card{
+      background: var(--card);
+      border:1px solid rgba(0,0,0,.07);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 20px rgba(0,0,0,.06);
+      padding: 14px;
+    }
+    .grow{flex: 1 1 360px;}
+    .full{flex: 1 1 100%;}
+    .title{font-size:18px; margin:0 0 6px 0;}
+    .hint{color:var(--muted); font-size:14px; line-height:1.35;}
+    .bigPrompt{font-size:26px; font-weight:1100; margin: 6px 0 10px 0;}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+
+    /* CATEGORY BAR */
+    .catBar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      align-items:center;
+    }
+    .catBtn{
+      border:1px solid rgba(0,0,0,.12);
+      background:white;
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:1000;
+      user-select:none;
+    }
+    .catBtn.active{
+      background: rgba(37,99,235,.10);
+      border-color: rgba(37,99,235,.35);
+      color: #1e3a8a;
+    }
+
+    /* PRODUCT */
+    .productCard{
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow: 0 10px 18px rgba(0,0,0,.06);
+      padding: 12px;
+      cursor:pointer;
+      user-select:none;
+      min-height:150px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      position:relative;
+      overflow:hidden;
+      text-align:left;
+    }
+    .productCard:focus{outline: 4px solid rgba(37,99,235,.25);}
+    .pTop{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
+    .pName{font-weight:1100; font-size:18px;}
+    .pMeta{font-size:12px; color:var(--muted); font-weight:900; margin-top:4px;}
+    .pPrice{
+      font-weight:1100;
+      background: rgba(22,163,74,.10);
+      color: #065f46;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(22,163,74,.18);
+      white-space:nowrap;
+    }
+    .pArt{
+      height:64px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:flex-end;
+      opacity:.96;
+    }
+
+    .chipLine{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    .chip{
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(0,0,0,.12);
+      background:white;
+      font-weight:1100;
+      user-select:none;
+    }
+    .chip.small{padding:8px 10px; font-weight:1000; font-size:14px;}
+    .chip.clickable{cursor:pointer;}
+    .chip.clickable:hover{filter:brightness(.98);}
+
+    /* MONEY */
+    .moneyGrid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+    .moneyCard{
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow: 0 10px 18px rgba(0,0,0,.06);
+      padding: 12px;
+      cursor:pointer;
+      user-select:none;
+      min-height:120px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      position:relative;
+      overflow:hidden;
+      text-align:left;
+    }
+    .moneyTop{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+    .badge{
+      font-weight:1100;
+      background: rgba(37,99,235,.10);
+      color: var(--accent);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(37,99,235,.18);
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .bigValue{font-size:30px; font-weight:1200; letter-spacing: .5px;}
+    .tl{font-weight:1100; color: var(--muted); margin-left:4px; font-size:18px;}
+    .art{height:58px; display:flex; align-items:flex-end; justify-content:flex-end; opacity:.95;}
+    .moneyCard:disabled{opacity:.45; cursor:not-allowed;}
+
+    .toast{
+      margin-top:10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight:1100;
+      display:none;
+    }
+    .toast.good{background: rgba(22,163,74,.12); border:1px solid rgba(22,163,74,.25); color:#065f46;}
+    .toast.bad{background: rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.25); color:#7f1d1d;}
+    .toast.info{background: rgba(37,99,235,.10); border:1px solid rgba(37,99,235,.22); color:#1e3a8a;}
+    .toast.warn{background: rgba(245,158,11,.16); border:1px solid rgba(245,158,11,.35); color:#7c2d12;}
+
+    .kasaBox{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:stretch;
+      margin-top:10px;
+    }
+    .kasaStat{
+      flex:1 1 210px;
+      background: rgba(255,255,255,.7);
+      border:1px solid rgba(0,0,0,.08);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .statLabel{font-size:12px; color:var(--muted); font-weight:1100;}
+    .statValue{font-size:28px; font-weight:1200; margin-top:6px;}
+    .statValue .tl{font-size:18px;}
+
+    .confetti{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index:999;
+      display:none;
+    }
+    .piece{
+      position:absolute;
+      width:10px; height:14px;
+      border-radius:3px;
+      opacity:.9;
+      animation: fall 900ms linear forwards;
+    }
+    @keyframes fall{
+      from{transform: translateY(-20px) rotate(0deg);}
+      to{transform: translateY(110vh) rotate(520deg);}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">₺</div>
+        <div>
+          <h1>Mini Market ₺</h1>
+          <div class="sub">Market alışverişiyle paraların büyüklüğünü tanıyalım (1, 5, 10, 20, 50, 100, 200 TL)</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="pill" aria-label="Arama">
+          <label for="search">Ara</label>
+          <input id="search" placeholder="Örn: telefon, tişört, süt" />
+        </div>
+
+        <div class="pill" aria-label="Ses ayarı">
+          <label for="soundToggle">Ses</label>
+          <select id="soundToggle">
+            <option value="on">Açık</option>
+            <option value="off">Kapalı</option>
+          </select>
+        </div>
+
+        <div class="pill starBox" aria-label="Yıldız sayacı">
+          <svg class="star" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#f59e0b" d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2z"/>
+          </svg>
+          <span id="stars">0</span>
+        </div>
+
+        <button class="btn white small" id="helpSpeak" title="Yönergeyi dinle">🔊 Dinle</button>
+      </div>
+    </div>
+
+    <div class="nav" role="navigation" aria-label="Menü">
+      <button class="btn primary small" data-view="market">🛒 Market</button>
+      <button class="btn green small" data-view="cart">🧺 Sepet</button>
+      <button class="btn gray small" data-view="checkout">💳 Kasa</button>
+      <button class="btn white small" data-view="rewards">🏆 Ödüllerim</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="panel" id="app">
+
+    <!-- MARKET -->
+    <section id="view-market" class="view">
+      <div class="row">
+        <div class="card full">
+          <h2 class="title">Market Rafı</h2>
+          <div class="hint">
+            İstediğin kadar ürün seçebilirsin. Ürüne tıkla → sepete eklenir.
+            Sonra <b>Kasa</b>ya gidip parayı öde.
+          </div>
+
+          <div class="catBar" id="catBar" aria-label="Kategoriler"></div>
+
+          <div class="toast info" id="marketToast"></div>
+
+          <div class="grid" id="productGrid" aria-label="Ürünler"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CART -->
+    <section id="view-cart" class="view" style="display:none">
+      <div class="row">
+        <div class="card grow">
+          <h2 class="title">Sepetim</h2>
+          <div class="hint">Sepetteki ürüne tıklarsan çıkar. Sonra kasaya gidebilirsin.</div>
+
+          <div class="chipLine" id="cartLine" aria-label="Sepet ürünleri"></div>
+
+          <div class="kasaBox">
+            <div class="kasaStat">
+              <div class="statLabel">Ürün sayısı</div>
+              <div class="statValue" id="cartCount">0</div>
+            </div>
+            <div class="kasaStat">
+              <div class="statLabel">Toplam</div>
+              <div class="statValue" id="cartTotal">0 <span class="tl">TL</span></div>
+            </div>
+          </div>
+
+          <div class="catBar" style="margin-top:12px">
+            <button class="btn gray" id="clearCart">Sepeti Boşalt</button>
+            <button class="btn green" id="cartToCheckout">Kasaya Git</button>
+          </div>
+
+          <div class="toast" id="cartToast"></div>
+        </div>
+
+        <div class="card grow">
+          <h2 class="title">Küçük İpucu</h2>
+          <div class="hint">
+            Kasada amaç: <b>Toplamı tam ödemek</b>.
+            Banknotların büyüklüklerini düşün:
+            1 &lt; 5 &lt; 10 &lt; 20 &lt; 50 &lt; 100 &lt; 200
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHECKOUT -->
+    <section id="view-checkout" class="view" style="display:none">
+      <div class="row">
+        <div class="card grow">
+          <h2 class="title">Kasa</h2>
+          <div class="hint">Cüzdanından banknot seç → kasaya ver. Toplamı <b>tam</b> öde.</div>
+
+          <div class="kasaBox">
+            <div class="kasaStat">
+              <div class="statLabel">Toplam</div>
+              <div class="statValue" id="totalDue">0 <span class="tl">TL</span></div>
+            </div>
+            <div class="kasaStat">
+              <div class="statLabel">Verilen</div>
+              <div class="statValue" id="paid">0 <span class="tl">TL</span></div>
+            </div>
+            <div class="kasaStat">
+              <div class="statLabel">Kalan</div>
+              <div class="statValue" id="remaining">0 <span class="tl">TL</span></div>
+            </div>
+          </div>
+
+          <div class="catBar" style="margin-top:10px">
+            <button class="btn white" id="undoMoney">↩️ Geri Al</button>
+            <button class="btn gray" id="resetPay">Sıfırla</button>
+            <button class="btn green" id="checkPay">Ödemeyi Kontrol Et</button>
+          </div>
+
+          <div class="toast" id="checkoutToast"></div>
+
+          <div class="hint" style="margin-top:10px; font-weight:1100;">Kasaya verdiğin banknotlar:</div>
+          <div class="chipLine" id="paidLine" aria-label="Verilen banknotlar"></div>
+        </div>
+
+        <div class="card grow">
+          <h2 class="title">Cüzdanım</h2>
+          <div class="hint">Bir banknota tıkla → kasaya ver.</div>
+          <div class="moneyGrid" id="walletGrid" aria-label="Cüzdan banknotları"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REWARDS -->
+    <section id="view-rewards" class="view" style="display:none">
+      <div class="row">
+        <div class="card full">
+          <h2 class="title">Ödüllerim</h2>
+          <div class="hint">Her doğru ödeme yıldız kazandırır ⭐</div>
+          <div class="bigPrompt" style="margin-top:10px">
+            Toplam Yıldız: <span id="starsBig">0</span> ⭐
+          </div>
+          <div class="catBar" style="margin-top:10px">
+            <button class="btn gray" id="resetStars">Yıldızları Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script>
+  // =====================
+  // MONEY SET (MAT.1.1.9)
+  // =====================
+  const DENOMS = [1, 5, 10, 20, 50, 100, 200];
+
+  // =====================
+  // CATEGORIES + ITEM POOLS
+  // (100 ürün üretmek için şablonlar)
+  // =====================
+  const CATEGORIES = [
+    { key:"Tümü",      icon:"🛍️" },
+    { key:"Yiyecek",   icon:"🍎" },
+    { key:"Giyim",     icon:"👕" },
+    { key:"Teknoloji", icon:"📱" },
+    { key:"Kırtasiye", icon:"✏️" },
+    { key:"Oyuncak",   icon:"🧸" },
+    { key:"Ev",        icon:"🏠" },
+    { key:"Temizlik",  icon:"🧼" },
+  ];
+
+  const TEMPLATES = {
+    "Yiyecek": [
+      ["Süt", "🥛"], ["Ekmek", "🥖"], ["Elma", "🍎"], ["Muz", "🍌"], ["Peynir", "🧀"],
+      ["Çikolata", "🍫"], ["Bisküvi", "🍪"], ["Meyve Suyu", "🧃"], ["Yoğurt", "🥣"], ["Su", "💧"]
+    ],
+    "Giyim": [
+      ["Tişört", "👕"], ["Pantolon", "👖"], ["Çorap", "🧦"], ["Şapka", "🧢"], ["Ayakkabı", "👟"],
+      ["Mont", "🧥"], ["Elbise", "👗"], ["Atkı", "🧣"], ["Eldiven", "🧤"], ["Terlik", "🩴"]
+    ],
+    "Teknoloji": [
+      ["Telefon", "📱"], ["Tablet", "💻"], ["Kulaklık", "🎧"], ["Klavye", "⌨️"], ["Mouse", "🖱️"],
+      ["Powerbank", "🔋"], ["USB Bellek", "💾"], ["Hoparlör", "🔊"], ["Akıllı Saat", "⌚"], ["Kamera", "📷"]
+    ],
+    "Kırtasiye": [
+      ["Kalem", "✏️"], ["Silgi", "🧽"], ["Defter", "📒"], ["Boyama", "🎨"], ["Makas", "✂️"],
+      ["Yapıştırıcı", "🧴"], ["Cetvel", "📏"], ["Kalemtıraş", "🪒"], ["Dosya", "📁"], ["Sticker", "🏷️"]
+    ],
+    "Oyuncak": [
+      ["Top", "⚽"], ["Oyuncak Araba", "🚗"], ["Bebek", "🪆"], ["Puzzle", "🧩"], ["Lego", "🧱"],
+      ["Uçak", "✈️"], ["Tren", "🚂"], ["Robot", "🤖"], ["Kukla", "🧸"], ["Kutu Oyun", "🎲"]
+    ],
+    "Ev": [
+      ["Yastık", "🛏️"], ["Bardak", "🥛"], ["Tabak", "🍽️"], ["Kaşık", "🥄"], ["Masa Örtüsü", "🧵"],
+      ["Lamba", "💡"], ["Saksı", "🪴"], ["Havlu", "🧻"], ["Askı", "🪝"], ["Çerçeve", "🖼️"]
+    ],
+    "Temizlik": [
+      ["Sabun", "🧼"], ["Şampuan", "🧴"], ["Deterjan", "🫧"], ["Sünger", "🧽"], ["Peçete", "🧻"],
+      ["Dezenfektan", "🧴"], ["Çamaşır Suyu", "🧪"], ["Mop", "🧹"], ["Çöp Torbası", "🗑️"], ["Bez", "🧻"]
+    ],
+  };
+
+  // Kategorilere göre fiyat dağılımı (sadece banknot değerleri)
+  const PRICE_WEIGHTS = {
+    "Yiyecek":   [1,5,5,10,10,20,20,50],
+    "Kırtasiye": [1,5,5,10,10,20,50],
+    "Oyuncak":   [5,10,10,20,20,50,50,100,200],
+    "Giyim":     [10,20,20,50,50,100,200],
+    "Ev":        [10,20,50,50,100,200],
+    "Temizlik":  [5,10,10,20,20,50,100],
+    "Teknoloji": [50,100,100,200,200]
+  };
+
+  // =====================
+  // STATE
+  // =====================
+  const state = {
+    view: "market",
+    stars: 0,
+    lastSpoken: "Mini markete hoş geldin!",
+    sound: "on",
+
+    products: [],            // generated 100 products
+    activeCategory: "Tümü",
+    search: "",
+
+    cart: [],                // array of product objects (allow duplicates)
+    paidNotes: [],            // list of denom values
+  };
+
+  // =====================
+  // ELEMENTS
+  // =====================
+  const el = {
+    search: document.getElementById("search"),
+    soundToggle: document.getElementById("soundToggle"),
+    helpSpeak: document.getElementById("helpSpeak"),
+    stars: document.getElementById("stars"),
+    starsBig: document.getElementById("starsBig"),
+
+    views: {
+      market: document.getElementById("view-market"),
+      cart: document.getElementById("view-cart"),
+      checkout: document.getElementById("view-checkout"),
+      rewards: document.getElementById("view-rewards"),
+    },
+
+    catBar: document.getElementById("catBar"),
+    productGrid: document.getElementById("productGrid"),
+    marketToast: document.getElementById("marketToast"),
+
+    cartLine: document.getElementById("cartLine"),
+    cartTotal: document.getElementById("cartTotal"),
+    cartCount: document.getElementById("cartCount"),
+    clearCart: document.getElementById("clearCart"),
+    cartToCheckout: document.getElementById("cartToCheckout"),
+    cartToast: document.getElementById("cartToast"),
+
+    totalDue: document.getElementById("totalDue"),
+    paid: document.getElementById("paid"),
+    remaining: document.getElementById("remaining"),
+    walletGrid: document.getElementById("walletGrid"),
+    paidLine: document.getElementById("paidLine"),
+    undoMoney: document.getElementById("undoMoney"),
+    resetPay: document.getElementById("resetPay"),
+    checkPay: document.getElementById("checkPay"),
+    checkoutToast: document.getElementById("checkoutToast"),
+
+    resetStars: document.getElementById("resetStars"),
+    confetti: document.getElementById("confetti"),
+  };
+
+  // =====================
+  // UTILS
+  // =====================
+  function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+  function pick(arr){ return arr[randInt(0, arr.length-1)]; }
+  function sum(arr){ return arr.reduce((t,x)=>t+x,0); }
+  function norm(s){ return (s || "").toLowerCase().trim(); }
+
+  function setToast(node, kind, text){
+    node.className = "toast " + kind;
+    node.textContent = text;
+    node.style.display = "block";
+  }
+  function hideToast(node){
+    node.style.display = "none";
+    node.textContent = "";
+  }
+
+  function saveStars(){ localStorage.setItem("minimarket_stars", String(state.stars)); }
+  function loadStars(){
+    const v = localStorage.getItem("minimarket_stars");
+    state.stars = v ? parseInt(v, 10) : 0;
+    syncStarsUI();
+  }
+  function addStar(n=1){
+    state.stars += n;
+    syncStarsUI();
+    saveStars();
+  }
+  function syncStarsUI(){
+    el.stars.textContent = state.stars;
+    el.starsBig.textContent = state.stars;
+  }
+
+  // =====================
+  // SPEECH
+  // =====================
+  function speak(text){
+    state.lastSpoken = text;
+    if(state.sound !== "on") return;
+
+    try { window.speechSynthesis.cancel(); } catch(e){}
+    const u = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices?.() || [];
+    const tr = voices.find(v => (v.lang || "").toLowerCase().startsWith("tr"));
+    if(tr) u.voice = tr;
+    u.lang = "tr-TR";
+    u.rate = 0.95;
+    u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+  window.speechSynthesis.onvoiceschanged = () => {};
+
+  // =====================
+  // CONFETTI
+  // =====================
+  function popConfetti(){
+    const c = el.confetti;
+    c.innerHTML = "";
+    c.style.display = "block";
+    for(let i=0; i<40; i++){
+      const p = document.createElement("div");
+      p.className = "piece";
+      p.style.left = randInt(0, 100) + "vw";
+      p.style.top = randInt(-20, 10) + "vh";
+      p.style.background = `hsl(${randInt(0,360)} 90% 60%)`;
+      p.style.width = randInt(6, 12) + "px";
+      p.style.height = randInt(10, 18) + "px";
+      p.style.animationDuration = randInt(650, 1100) + "ms";
+      c.appendChild(p);
+    }
+    setTimeout(() => { c.style.display="none"; c.innerHTML=""; }, 1000);
+  }
+
+  // =====================
+  // UI: MONEY CARD (placeholder SVG)
+  // =====================
+  function moneyArtSVG(value){
+    const hueMap = {1:210, 5:160, 10:120, 20:40, 50:300, 100:260, 200:10};
+    const h = hueMap[value] ?? 220;
+    return `
+      <svg width="110" height="58" viewBox="0 0 110 58" aria-hidden="true">
+        <defs>
+          <linearGradient id="g${value}" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="hsl(${h} 90% 88%)"/>
+            <stop offset="100%" stop-color="hsl(${h} 85% 72%)"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="6" width="106" height="46" rx="12" fill="url(#g${value})" stroke="rgba(0,0,0,.15)"/>
+        <circle cx="22" cy="29" r="10" fill="rgba(255,255,255,.55)"/>
+        <circle cx="88" cy="29" r="10" fill="rgba(255,255,255,.55)"/>
+        <text x="55" y="35" text-anchor="middle" font-size="18" font-weight="900" fill="rgba(0,0,0,.45)">${value}</text>
+      </svg>
+    `;
+  }
+  function createMoneyCard(value, onClick){
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "moneyCard";
+    btn.setAttribute("aria-label", `${value} TL`);
+    btn.innerHTML = `
+      <div class="moneyTop">
+        <div class="badge">₺ Banknot</div>
+        <div class="bigValue">${value}<span class="tl">TL</span></div>
+      </div>
+      <div class="art">${moneyArtSVG(value)}</div>
+    `;
+    btn.addEventListener("click", () => onClick(value));
+    return btn;
+  }
+
+  // =====================
+  // UI: PRODUCT CARD
+  // =====================
+  function productArt(icon){
+    return `
+      <svg width="110" height="64" viewBox="0 0 110 64" aria-hidden="true">
+        <rect x="6" y="10" width="98" height="48" rx="16" fill="rgba(37,99,235,.08)" stroke="rgba(0,0,0,.10)"/>
+        <text x="55" y="44" text-anchor="middle" font-size="30">${icon}</text>
+      </svg>
+    `;
+  }
+  function createProductCard(p){
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "productCard";
+    btn.setAttribute("aria-label", `${p.name}, ${p.price} TL, ${p.category}`);
+    btn.innerHTML = `
+      <div class="pTop">
+        <div>
+          <div class="pName">${p.name}</div>
+          <div class="pMeta">${p.category}</div>
+        </div>
+        <div class="pPrice">${p.price} TL</div>
+      </div>
+      <div class="pArt">${productArt(p.icon)}</div>
+    `;
+    btn.addEventListener("click", () => addToCart(p));
+    return btn;
+  }
+
+  // =====================
+  // NAVIGATION
+  // =====================
+  function showView(name){
+    state.view = name;
+    for(const k of Object.keys(el.views)){
+      el.views[k].style.display = (k === name) ? "block" : "none";
+    }
+    if(name === "market") speak("Market rafındayız. Ürüne tıkla, sepete ekle.");
+    if(name === "cart") speak("Sepete hoş geldin. Kasaya gidebilirsin.");
+    if(name === "checkout") speak("Kasadayız. Toplamı tam öde.");
+    if(name === "rewards") speak("Ödüllerim. Yıldızlarını görebilirsin.");
+  }
+  document.querySelectorAll("[data-view]").forEach(b=>{
+    b.addEventListener("click", () => {
+      if(b.dataset.view === "checkout") ensureCheckoutReady();
+      showView(b.dataset.view);
+    });
+  });
+
+  // =====================
+  // PRODUCT GENERATION (100 items)
+  // =====================
+  function generateProducts(count=100){
+    const cats = Object.keys(TEMPLATES); // exclude "Tümü"
+    const result = [];
+    const usedNames = new Set();
+
+    // yardımcı: benzersiz isim üret
+    function uniqueName(base){
+      if(!usedNames.has(base)){ usedNames.add(base); return base; }
+      let n=2;
+      while(usedNames.has(`${base} ${n}`)) n++;
+      const name = `${base} ${n}`;
+      usedNames.add(name);
+      return name;
+    }
+
+    // kategorilere olabildiğince dengeli dağıtalım
+    let i=0;
+    while(result.length < count){
+      const cat = cats[i % cats.length];
+      const [baseName, icon] = pick(TEMPLATES[cat]);
+      const price = pick(PRICE_WEIGHTS[cat] || DENOMS);
+      const name = uniqueName(baseName);
+      result.push({
+        id: `${cat}_${result.length}`,
+        name,
+        icon,
+        category: cat,
+        price
+      });
+      i++;
+    }
+    return result;
+  }
+
+  // =====================
+  // CATEGORY BAR + FILTERS
+  // =====================
+  function renderCategories(){
+    el.catBar.innerHTML = "";
+    CATEGORIES.forEach(c=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "catBtn" + (state.activeCategory === c.key ? " active" : "");
+      btn.textContent = `${c.icon} ${c.key}`;
+      btn.addEventListener("click", () => {
+        state.activeCategory = c.key;
+        renderCategories();
+        renderMarket();
+        speak(c.key === "Tümü" ? "Tüm ürünler." : `${c.key} kategorisi.`);
+      });
+      el.catBar.appendChild(btn);
+    });
+  }
+
+  function filteredProducts(){
+    const q = norm(state.search);
+    return state.products.filter(p=>{
+      const catOk = (state.activeCategory === "Tümü") || (p.category === state.activeCategory);
+      if(!catOk) return false;
+      if(!q) return true;
+      return norm(p.name).includes(q) || norm(p.category).includes(q);
+    });
+  }
+
+  // =====================
+  // MARKET
+  // =====================
+  function renderMarket(){
+    hideToast(el.marketToast);
+    el.productGrid.innerHTML = "";
+
+    const list = filteredProducts();
+    if(list.length === 0){
+      const msg = "Bu aramada ürün bulunamadı.";
+      setToast(el.marketToast, "warn", msg);
+      return;
+    }
+
+    // görünürlük için limit yok ama performans için 100 zaten OK
+    list.forEach(p => el.productGrid.appendChild(createProductCard(p)));
+
+    const msg = `Ürünler hazır. Sepette ${state.cart.length} ürün var.`;
+    setToast(el.marketToast, "info", msg);
+  }
+
+  function addToCart(product){
+    state.cart.push(product);
+    renderCart();
+    renderCheckout();
+
+    const msg = `${product.name} sepete eklendi. ${product.price} TL.`;
+    setToast(el.marketToast, "info", msg);
+    speak(msg);
+  }
+
+  // =====================
+  // CART
+  // =====================
+  function cartTotal(){
+    return sum(state.cart.map(p => p.price));
+  }
+
+  function renderCart(){
+    el.cartLine.innerHTML = "";
+    hideToast(el.cartToast);
+
+    el.cartCount.textContent = String(state.cart.length);
+    const total = cartTotal();
+    el.cartTotal.innerHTML = `${total} <span class="tl">TL</span>`;
+
+    if(state.cart.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "hint";
+      empty.style.marginTop = "10px";
+      empty.textContent = "Sepetin boş. Markete gidip ürün seç.";
+      el.cartLine.appendChild(empty);
+      return;
+    }
+
+    // her ürün chip olarak; tıklayınca bir tane silsin
+    state.cart.forEach((p, idx) => {
+      const chip = document.createElement("div");
+      chip.className = "chip clickable";
+      chip.title = "Çıkarmak için tıkla";
+      chip.textContent = `${p.icon} ${p.name} — ${p.price} TL`;
+      chip.addEventListener("click", () => {
+        state.cart.splice(idx, 1);
+        renderCart();
+        renderCheckout();
+        speak("Ürün sepetten çıkarıldı.");
+      });
+      el.cartLine.appendChild(chip);
+    });
+  }
+
+  el.clearCart.addEventListener("click", () => {
+    state.cart = [];
+    state.paidNotes = [];
+    renderCart();
+    renderCheckout();
+    setToast(el.cartToast, "info", "Sepet boşaltıldı.");
+    speak("Sepet boşaltıldı.");
+  });
+
+  el.cartToCheckout.addEventListener("click", () => {
+    ensureCheckoutReady();
+    showView("checkout");
+  });
+
+  // =====================
+  // CHECKOUT
+  // =====================
+  function paidTotal(){ return sum(state.paidNotes); }
+
+  function ensureCheckoutReady(){
+    if(state.cart.length === 0){
+      speak("Önce ürün seçmelisin.");
+      showView("market");
+      setToast(el.marketToast, "warn", "Önce marketten ürün seç!");
+      return;
+    }
+  }
+
+  function renderCheckout(){
+    const due = cartTotal();
+    const paid = paidTotal();
+    const rem = due - paid;
+
+    el.totalDue.innerHTML = `${due} <span class="tl">TL</span>`;
+    el.paid.innerHTML = `${paid} <span class="tl">TL</span>`;
+    el.remaining.innerHTML = `${rem} <span class="tl">TL</span>`;
+
+    // paid line
+    el.paidLine.innerHTML = "";
+    if(state.paidNotes.length === 0){
+      const t = document.createElement("div");
+      t.className = "hint";
+      t.textContent = "Henüz banknot vermedin.";
+      el.paidLine.appendChild(t);
+    } else {
+      state.paidNotes.forEach(v => {
+        const chip = document.createElement("div");
+        chip.className = "chip small";
+        chip.textContent = `${v} TL`;
+        el.paidLine.appendChild(chip);
+      });
+    }
+
+    // wallet
+    el.walletGrid.innerHTML = "";
+    DENOMS.forEach(v => el.walletGrid.appendChild(createMoneyCard(v, giveMoney)));
+  }
+
+  function giveMoney(value){
+    const due = cartTotal();
+    if(due === 0){
+      setToast(el.checkoutToast, "warn", "Önce ürün seçmelisin.");
+      speak("Önce ürün seçmelisin.");
+      return;
+    }
+
+    state.paidNotes.push(value);
+    renderCheckout();
+
+    const paid = paidTotal();
+    const rem = due - paid;
+
+    if(rem > 0){
+      setToast(el.checkoutToast, "info", `Güzel! Kalan: ${rem} TL. Devam et.`);
+      speak(`Kalan ${rem} TL.`);
+    } else if(rem === 0){
+      setToast(el.checkoutToast, "good", "Harika! Tam ödedin! ⭐");
+      speak("Harika! Tam ödedin!");
+      addStar(1);
+      popConfetti();
+    } else {
+      setToast(el.checkoutToast, "warn", "Biraz fazla verdin. ↩️ Geri Al ile son banknotu geri alabilirsin.");
+      speak("Biraz fazla verdin. Geri al.");
+    }
+  }
+
+  el.undoMoney.addEventListener("click", () => {
+    if(state.paidNotes.length === 0) return;
+    state.paidNotes.pop();
+    renderCheckout();
+    hideToast(el.checkoutToast);
+    speak("Son banknot geri alındı.");
+  });
+
+  el.resetPay.addEventListener("click", () => {
+    state.paidNotes = [];
+    renderCheckout();
+    hideToast(el.checkoutToast);
+    speak("Ödeme sıfırlandı.");
+  });
+
+  el.checkPay.addEventListener("click", () => {
+    const due = cartTotal();
+    const paid = paidTotal();
+
+    if(due === 0){
+      setToast(el.checkoutToast, "warn", "Sepet boş. Markete gidip ürün seç.");
+      speak("Sepet boş.");
+      return;
+    }
+
+    if(paid === due){
+      setToast(el.checkoutToast, "good", "Süper! Tam ödeme! ⭐");
+      speak("Süper! Tam ödeme.");
+    } else if(paid < due){
+      setToast(el.checkoutToast, "bad", `Eksik. ${due - paid} TL daha vermelisin.`);
+      speak("Eksik ödeme.");
+    } else {
+      setToast(el.checkoutToast, "warn", `Fazla. ${paid - due} TL fazla verdin. ↩️ ile geri al.`);
+      speak("Fazla ödeme.");
+    }
+  });
+
+  // =====================
+  // REWARDS
+  // =====================
+  el.resetStars.addEventListener("click", () => {
+    state.stars = 0;
+    saveStars();
+    syncStarsUI();
+    speak("Yıldızlar sıfırlandı.");
+  });
+
+  // =====================
+  // SEARCH + SOUND + HELP
+  // =====================
+  el.search.addEventListener("input", (e) => {
+    state.search = e.target.value;
+    renderMarket();
+  });
+
+  el.soundToggle.addEventListener("change", (e) => {
+    state.sound = e.target.value;
+    if(state.sound === "off"){
+      try { window.speechSynthesis.cancel(); } catch(e){}
+    } else {
+      speak("Ses açıldı.");
+    }
+  });
+
+  el.helpSpeak.addEventListener("click", () => {
+    if(state.view === "market") speak("Bir ürüne tıkla. Sepete eklenir. Sonra kasaya gidip toplamı tam öde.");
+    else if(state.view === "cart") speak("Sepetteki ürüne tıklarsan çıkar. Sonra kasaya git.");
+    else if(state.view === "checkout") speak("Cüzdandan banknot seç. Toplamı tam öde. 1, 5, 10, 20, 50, 100, 200.");
+    else if(state.view === "rewards") speak("Yıldızların burada.");
+    else speak(state.lastSpoken);
+  });
+
+  // =====================
+  // INIT
+  // =====================
+  function init(){
+    loadStars();
+    state.sound = el.soundToggle.value;
+
+    state.products = generateProducts(100);
+    state.activeCategory = "Tümü";
+    state.search = "";
+
+    renderCategories();
+    renderMarket();
+    renderCart();
+    renderCheckout();
+    showView("market");
+
+    setToast(el.marketToast, "info", "Hoş geldin! İstediğin kadar ürün seçebilirsin.");
+    speak("Hoş geldin! İstediğin kadar ürün seçebilirsin.");
+  }
+
+  init();
+</script>
+</body>
+</html>
